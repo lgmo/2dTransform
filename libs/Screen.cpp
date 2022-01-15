@@ -1,14 +1,16 @@
 #include <Screen.h>
 
-void processInput(GLFWwindow *window) {
+void processInput(GLFWwindow *window)
+{
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 }
-void frameBufferSizeCallBack(GLFWwindow *window, int width, int height) {
-    glViewport(0,0, width, height);
+void frameBufferSizeCallBack(GLFWwindow *window, int width, int height)
+{
+    glViewport(0, 0, width, height);
 }
 
-Screen::Screen(int width, int height, const std::string &title, float r, float g, float b , float alpha)
+Screen::Screen(int width, int height, const std::string &title, float r, float g, float b, float alpha)
 {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -17,14 +19,16 @@ Screen::Screen(int width, int height, const std::string &title, float r, float g
 
     window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
 
-    if (window == NULL) {
+    if (window == NULL)
+    {
         std::cout << "Failed to creat window\n";
         exit(-1);
     }
-    
+
     glfwMakeContextCurrent(window);
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
         std::cout << "Failed to initialize GLAD\n";
         glfwTerminate();
         exit(-1);
@@ -35,24 +39,29 @@ Screen::Screen(int width, int height, const std::string &title, float r, float g
     glfwSetFramebufferSizeCallback(window, frameBufferSizeCallBack);
 }
 
-bool Screen::isOpen() {
+bool Screen::isOpen()
+{
     return !glfwWindowShouldClose(window);
 }
 
-void Screen::clear(float r, float g, float b, float alpha) {
+void Screen::clear(float r, float g, float b, float alpha)
+{
     glClearColor(r, g, b, alpha);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void Screen::swap() {
+void Screen::swap()
+{
     glfwSwapBuffers(window);
 }
 
-void Screen::pollEvents() {
+void Screen::pollEvents()
+{
     processInput(window);
     glfwPollEvents();
 }
 
-Screen::~Screen() {
+Screen::~Screen()
+{
     glfwTerminate();
 }

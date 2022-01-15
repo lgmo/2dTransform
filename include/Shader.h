@@ -4,27 +4,34 @@
 #include <GLFW/glfw3.h>
 #include <string>
 
-class Shader {
-private:
-    unsigned int shaderProgram;
+class Shader
+{
 public:
-    Shader(const std::string& vsFileName, const std::string& fsFileName);
+    unsigned int shaderProgram;
+
+    Shader(const std::string &vsFileName, const std::string &fsFileName);
     void use();
+    void setInt(const char* name, int value);
+    void setFloat(const char* name, float value);
     ~Shader();
 };
 
-class VAO {
+class VAO
+{
 private:
     unsigned int vao;
+
 public:
     VAO();
     void bind();
     ~VAO();
 };
 
-class VBO {
+class VBO
+{
 private:
     unsigned int vbo;
+
 public:
     VBO(float vertices[], unsigned int size, GLenum drawMode);
     ~VBO();

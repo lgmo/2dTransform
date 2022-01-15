@@ -4,31 +4,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char* readShaderFile(const std::string& shaderFileName) {
+char *readShaderFile(const std::string &shaderFileName)
+{
     char *buffer;
     int length;
     FILE *shaderFile = fopen(shaderFileName.c_str(), "rt");
 
-    if (shaderFile) {
+    if (shaderFile)
+    {
         fseek(shaderFile, 0, SEEK_END);
         length = ftell(shaderFile);
         fseek(shaderFile, 0, SEEK_SET);
-        buffer = (char *) malloc(length+1);
+        buffer = (char *)malloc(length + 1);
         if (buffer)
-            fread (buffer, 1, length, shaderFile);
-        else {
+            fread(buffer, 1, length, shaderFile);
+        else
+        {
             fclose(shaderFile);
             throw std::string("Unable to read ") + shaderFileName;
         }
-    } else {
-        throw std::string("Unable to open ") + shaderFileName;  
+    }
+    else
+    {
+        throw std::string("Unable to open ") + shaderFileName;
     }
     fclose(shaderFile);
     buffer[length] = '\0';
     return buffer;
 }
 
-Shader::Shader(const std::string& vsFileName, const std::string& fsFileName) {
+Shader::Shader(const std::string &vsFileName, const std::string &fsFileName)
+{
     char *vertexShaderSource = readShaderFile(vsFileName);
     char *fragmentShaderSource = readShaderFile(fsFileName);
 
@@ -42,8 +48,10 @@ Shader::Shader(const std::string& vsFileName, const std::string& fsFileName) {
     free(vertexShaderSource);
 
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(vertexShader, GL_COMPILE_STATUS, NULL, infolog);;
+    if (!success)
+    {
+        glGetShaderInfoLog(vertexShader, GL_COMPILE_STATUS, NULL, infolog);
+        ;
         free(fragmentShaderSource);
         throw std::string("ERROR::SHADER::VERTEX::COMPILATION_FAILED\nError: ") + infolog;
     }
@@ -55,8 +63,10 @@ Shader::Shader(const std::string& vsFileName, const std::string& fsFileName) {
     free(fragmentShaderSource);
 
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(fragmentShader, GL_COMPILE_STATUS, NULL, infolog);;
+    if (!success)
+    {
+        glGetShaderInfoLog(fragmentShader, GL_COMPILE_STATUS, NULL, infolog);
+        ;
         throw std::string("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\nError: ") + infolog;
     }
 
@@ -69,39 +79,56 @@ Shader::Shader(const std::string& vsFileName, const std::string& fsFileName) {
     glDeleteShader(fragmentShader);
 
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(shaderProgram, GL_LINK_STATUS, NULL, infolog);;
-        throw std::string("ERROR::SHADER::PROGRAM::COMPILATION_FAILED\nError: ") + infolog;
+    if (!success)
+    {
+        glGetShaderInfoLog(shaderProgram, GL_LINK_STATUS, NULL, infolog);
+        ;
+        throw std::string("ERROR::SHADER::PROGRAM::LINKING_FAILED\nError: ") + infolog;
     }
 }
 
-void Shader::use() {
+void Shader::use()
+{
     glUseProgram(shaderProgram);
 }
 
-Shader::~Shader() {
+void Shader::setInt(const char *name, int value) {
+    glUniform1i(glGetUniformLocation(shaderProgram, name), value); 
+}
+
+void Shader::setFloat(const char *name, float value) {
+    glUniform1f(glGetUniformLocation(shaderProgram, name), value); 
+}
+
+Shader::~Shader()
+{
     glDeleteShader(shaderProgram);
 }
 
-VAO::VAO() {
+VAO::VAO()
+{
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 }
 
-void VAO::bind() {
+void VAO::bind()
+{
     glBindVertexArray(vao);
 }
 
-VAO::~VAO() {
+VAO::~VAO()
+{
     glDeleteVertexArrays(1, &vao);
 }
 
-VBO::VBO(float* vertices, unsigned int size, GLenum drawMode) {
+VBO::VBO(float *vertices, unsigned int size, GLenum drawMode)
+{
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, size, vertices, drawMode);
+    glBufferData(GL_ARRAY_BUFFER, size, vertices, drawMode);
 }
 
-VBO::~VBO() {
+VBO::~VBO()
+{
     glDeleteBuffers(1, &vbo);
 }
