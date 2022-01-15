@@ -1,26 +1,39 @@
-#include <fstream>
-const int width = 800, height = 600;
+#include <glad/glad.h>
+#include <Screen.h>
+#include <Shader.h>
 
-using namespace std;
+int main() { 
+    try {
+        Screen screen(800,600,"2D Transformations");    
+        Shader program("../src/shaders/vertexShader.vert", "../src/shaders/fragmentShader.frag");
 
-int main() {
-    ofstream img("picture.ppm");
-    img << "P3" << endl;
-    img << width << " " << height << endl;
-    img << "255" << endl;
+        float vertices[] = {
+            -1.0f,-1.0f, 0.0f,
+            -1.0f, 1.0f, 0.0f,
+            1.0f, 1.0f, 0.0f,
+            
+            1.0f, 1.0f, 0.0f,
+            1.0f,-1.0f, 0.0f,
+            -1.0f,-1.0f, 0.0f
+        };
 
-    int r, g, b;
-    for (int y=0; y<height; y++) {
-        for (int x=0; x<width; x++) {
-            if ( x % (width/4) == 0|| y % (height/4) == 0 ) {
-                r = 255; g = 255; b = 255;
-            } else  {
-                r = 0; g = 0; b = 0;
-            }
-            img << r << " " << g << " " << b <<endl;
+        VAO vao;
+
+        VBO vbo(vertices, sizeof(vertices), GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+        //press escape to close the screen
+        while (screen.isOpen()) {
+            screen.clear(0.0f, 0.0f, 0.0f);
+            program.use();
+            vao.bind();
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+            screen.swap();
+            screen.pollEvents();
         }
-    }
-
-    system("gthumb picture.ppm");
+    } catch (std::string ex) {
+        std::cout << ex << '\n';
+    } 
     return 0;
 }
