@@ -19,15 +19,13 @@ void detVertices(float vertices[])
                 vertices[6*NUM*i + 6*j + 3*k] = -1.0f+float(i)*0.5f;
                 vertices[6*NUM*i + 6*j + 3*k+1] = -1.0f+float(j+k)*2.0f/NUM;
                 vertices[6*NUM*i + 6*j + 3*k+2] = 0; 
-            }
-    for (int i=0; i<5; i++) 
-        for (int j=0; j<NUM; j++) 
-            for (int k=0; k<2; k++) 
-            {
                 vertices[6*NUM*(i+5) + 6*j + 3*k] = -1.0f+float(j+k)*2.0f/NUM;
                 vertices[6*NUM*(i+5) + 6*j + 3*k+1] = -1.0f+float(i)*0.5f;
                 vertices[6*NUM*(i+5) + 6*j + 3*k+2] = 0; 
             }
+}
+
+void getTransformation() {
 }
 
 int main()
@@ -37,9 +35,8 @@ int main()
     try
     {
         Screen screen(800, 800, "2D Transformations");
+        getTransformation();
         Shader program("../src/shaders/vertexShader.vert", "../src/shaders/fragmentShader.frag");
-
-
 
         float vertices[60*NUM];
 
@@ -55,8 +52,6 @@ int main()
         while (screen.isOpen())
         {
             screen.clear(0.0f, 0.0f, 0.0f);
-            // glActiveTexture(GL_TEXTURE0);
-            // glBindTexture(GL_TEXTURE_2D, texture1);
             program.use();
             vao.bind();
             glDrawArrays(GL_LINES, 0, 20*NUM);
@@ -65,7 +60,6 @@ int main()
             program.setFloat("dt", (time+=dt));
             if (time >= 1.0f || time <= 0.0f)
                 dt *= -1;
-            //sleep_for(milliseconds(42));
         }
     }
     catch (std::string ex)
